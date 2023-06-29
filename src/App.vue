@@ -6,7 +6,9 @@
         <div class="px-10 py-10">
           <form class="max-w-md w-full space-y-8" @submit.prevent="checkForm">
             <div>
-              <h2 class="text-center text-3xl font-extrabold text-gray-900 dark:text-white">Motor Vehicle Import Duty Calculator</h2>
+              <h2 class="text-center text-3xl font-extrabold text-gray-900 dark:text-white">
+                <button @click="toggleDark()">Motor Vehicle Import Duty Calculator</button>
+              </h2>
               <p class="text-sm text-center dark:text-white">
                 v{{ version }} | Last updated: 11/06/2023 | Click
                 <a href="https://ridwanazeez.notion.site/Motor-Vehicle-Import-Duty-Calculator-update-notes-dbcbf1d2de55487cbaaf4daa707cc443" class="underline">here</a>
@@ -209,7 +211,11 @@
 
 <script>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from "@headlessui/vue";
+import { useDark, useToggle } from "@vueuse/core";
 import { version } from "../package.json";
+
+const isDark = useDark();
+const toggleDark = useToggle(isDark);
 
 export default {
   components: {
@@ -241,6 +247,8 @@ export default {
       total_cost: "",
       show: false,
       version: version,
+      isDark,
+      toggleDark,
       errors: [],
     };
   },
