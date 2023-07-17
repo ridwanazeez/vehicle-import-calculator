@@ -10,7 +10,7 @@
                 <button @click="toggleDark()">Motor Vehicle Import Duty Calculator</button>
               </h2>
               <p class="text-sm text-center dark:text-white">
-                v{{ version }} | Last updated: 11/06/2023 | Click
+                v{{ version }} | Last updated: 30/06/2023 | Click
                 <a href="https://ridwanazeez.notion.site/Motor-Vehicle-Import-Duty-Calculator-update-notes-dbcbf1d2de55487cbaaf4daa707cc443" class="underline">here</a>
                 to see what's new
               </p>
@@ -163,7 +163,8 @@
                       <tr>
                         <th class="text-left">Excise Tax:</th>
                         <td></td>
-                        <td class="text-right">{{ "$ " + Math.round(excise_due * exchange_rate).toLocaleString() + " " }}GYD</td>
+                        <td v-if="cc == '1500' || cc == '1000'" class="text-right">{{ "$ " + Math.round(excise_due).toLocaleString() + " " }}GYD</td>
+                        <td v-else class="text-right">{{ "$ " + Math.round(excise_due * exchange_rate).toLocaleString() + " " }}GYD</td>
                       </tr>
                       <tr>
                         <th class="text-left">Duty:</th>
@@ -417,12 +418,14 @@ export default {
           } else {
             switch (this.cc) {
               case "1000":
-                this.excise_due = 0;
+                this.excise_due = 800000;
+                this.duty_due = 0;
                 this.total_tax = 800000;
                 this.total_cost = this.cost + this.total_tax;
                 break;
               case "1500":
-                this.excise_due = 0;
+                this.excise_due = 800000;
+                this.duty_due = 0;
                 this.total_tax = 800000;
                 this.total_cost = this.cost + this.total_tax;
                 break;
