@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/vehicle-import-calculator/sw.js', { scope: '/vehicle-import-calculator/' })})}
