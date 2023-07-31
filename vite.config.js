@@ -12,8 +12,8 @@ export default defineConfig({
     VitePWA({
       registerType: "autoUpdate",
       manifest: {
-        theme_color: "#22C55E",
-        background_color: "#FFFFFF",
+        theme_color: "#00E6AC",
+        background_color: "#00E6AC",
         display: "standalone",
         scope: "https://ridwanazeez.github.io/vehicle-import-calculator/",
         start_url: "https://ridwanazeez.github.io/vehicle-import-calculator/",
