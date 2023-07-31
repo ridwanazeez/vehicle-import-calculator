@@ -15,8 +15,8 @@ export default defineConfig({
         theme_color: "#22C55E",
         background_color: "#FFFFFF",
         display: "standalone",
-        scope: "https://ridwanazeez.github.io/vehicle-import-calculator/",
-        start_url: "https://ridwanazeez.github.io/vehicle-import-calculator/",
+        scope: "/",
+        start_url: "/",
         name: "Vehicle Import Calculator",
         short_name: "Vehicle Import Calculator",
         icons: [
