@@ -6,11 +6,9 @@
         <div class="px-10 py-10">
           <form class="max-w-md w-full space-y-8" @submit.prevent="checkForm">
             <div>
-              <h2 class="text-center text-3xl font-extrabold text-gray-900 dark:text-white">
-                <button @click="toggleDark()">Motor Vehicle Import Duty Calculator</button>
-              </h2>
+              <h2 class="text-center text-3xl font-extrabold text-gray-900 dark:text-white">Motor Vehicle Import Duty Calculator</h2>
               <p class="text-sm text-center dark:text-white">
-                v{{ version }} | Last updated: 30/06/2023 | Click
+                v{{ version }} | Last updated: 30/07/2023 | Click
                 <a href="https://ridwanazeez.notion.site/Motor-Vehicle-Import-Duty-Calculator-update-notes-dbcbf1d2de55487cbaaf4daa707cc443" class="underline">here</a>
                 to see what's new
               </p>
