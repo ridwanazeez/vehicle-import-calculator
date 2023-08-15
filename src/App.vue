@@ -12,16 +12,15 @@
           <form class="max-w-md w-full space-y-8" @submit.prevent="checkForm">
             <div>
               <h2 class="text-center text-3xl font-extrabold text-gray-900 dark:text-white">
-                Vehicle Import Duty Calculator
+                Vehicle Import Taxes Calculator
               </h2>
               <p class="text-sm text-center dark:text-white">
-                v{{ version }} | Last updated: 15/08/2023 | Click
+                v{{ version }} | Last updated: 15/08/2023 |
                 <a
-                  href="https://ridwanazeez.notion.site/Motor-Vehicle-Import-Duty-Calculator-update-notes-dbcbf1d2de55487cbaaf4daa707cc443"
+                  href="https://ridwanazeez.notion.site/Vehicle-Import-Taxes-Calculator-update-notes-dbcbf1d2de55487cbaaf4daa707cc443"
                   class="underline"
-                  >here</a
+                  >See what's new</a
                 >
-                to see what's new
               </p>
               <p class="mt-4 font-medium text-gray-500 dark:text-white text-center">
                 Disclaimer: This tool is in no way affiliated with the Guyana Revenue Authority
@@ -193,6 +192,15 @@
                   "
                 >
                   Calculate Duty
+                </button>
+              </div>
+              <div>
+                <button
+                  class="text-gray-300 hover:text-gray-700 rounded-md w-full"
+                  type="button"
+                  @click="toggleDark()"
+                >
+                  Toggle Theme
                 </button>
               </div>
             </div>
