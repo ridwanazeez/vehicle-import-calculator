@@ -4,7 +4,7 @@
       <div>
         <div
           class="bg-cover bg-center mx-auto w-auto [height:200px] sm:rounded-t-xl"
-          style="background-image: url(/empty-wallet.jpg)"
+          style="background-image: url(/images/empty-wallet.jpg)"
           role="img"
           aria-label="Image of an empty wallet"
         ></div>
