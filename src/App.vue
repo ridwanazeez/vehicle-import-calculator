@@ -25,7 +25,10 @@
             <p class="mt-4 font-medium text-gray-500 dark:text-white text-center">
               Disclaimer: This tool is in no way affiliated with the Guyana Revenue Authority (GRA).
               It is an independent calculator which uses
-              <a href="https://www.gra.gov.gy/imports/motor-vehicle/" class="underline"
+              <a
+                href="https://www.gra.gov.gy/imports/motor-vehicle/"
+                class="underline"
+                target="_blank"
                 >publicly available formulas</a
               >
               <br />
@@ -197,6 +200,11 @@
                 Toggle Theme
               </button>
             </div>
+            <p class="font-medium text-gray-300 text-center">
+              Made with ♥ by
+              <a href="https://ridwanazeez.github.io/" class="underline" target="_blank">me</a>
+              <br />
+            </p>
           </div>
         </form>
       </div>
@@ -233,14 +241,35 @@
             >
               <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4 dark:bg-gray-900 dark:text-white">
                 <div class="text-center sm:text-left">
-                  <DialogTitle as="h3" class="text-xl font-bold text-gray-900 pb-3 dark:text-white"
-                    >Results
-                  </DialogTitle>
+                  <div class="flex justify-between items-center pb-3">
+                    <DialogTitle as="h3" class="text-xl font-bold text-gray-900 dark:text-white">
+                      Results
+                    </DialogTitle>
+                    <label
+                      class="relative inline-flex cursor-pointer items-center"
+                      @click="toggleCurrency()"
+                    >
+                      <input
+                        id="currencySwitch"
+                        v-model="showPricesInUSD"
+                        type="checkbox"
+                        class="peer sr-only"
+                      />
+                      <label for="currencySwitch" class="hidden"></label>
+                      <div
+                        class="peer h-6 w-11 rounded-full border bg-gray-300 after:absolute after:left-[2px] after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-500 peer-checked:after:translate-x-full peer-focus:ring-green-300"
+                      ></div>
+                      &nbsp;Currency: {{ currency }}
+                    </label>
+                  </div>
                   <table class="table-auto w-full">
                     <tr>
                       <th class="text-left">Car Cost:</th>
                       <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                      <td class="text-right">
+                      <td v-if="showPricesInUSD" class="text-right">
+                        {{ "$ " + Math.round(cost / exchange_rate).toLocaleString() + " " }}USD
+                      </td>
+                      <td v-else class="text-right">
                         {{ "$ " + Math.round(cost).toLocaleString() + " " }}GYD
                       </td>
                     </tr>
@@ -248,39 +277,65 @@
                       <th class="text-left">Excise Tax:</th>
                       <td></td>
                       <td v-if="cc == '1500' || cc == '1000'" class="text-right">
-                        {{ "$ " + Math.round(excise_due).toLocaleString() + " " }}GYD
+                        <span v-if="showPricesInUSD"
+                          >{{
+                            "$ " + Math.round(excise_due / exchange_rate).toLocaleString() + " "
+                          }}USD</span
+                        >
+                        <span v-else
+                          >{{ "$ " + Math.round(excise_due).toLocaleString() + " " }}GYD</span
+                        >
                       </td>
                       <td v-else class="text-right">
-                        {{
-                          "$ " + Math.round(excise_due * exchange_rate).toLocaleString() + " "
-                        }}GYD
+                        <span v-if="showPricesInUSD">
+                          {{ "$ " + Math.round(excise_due).toLocaleString() + " " }}USD
+                        </span>
+                        <span v-else>
+                          {{
+                            "$ " + Math.round(excise_due * exchange_rate).toLocaleString() + " "
+                          }}GYD
+                        </span>
                       </td>
                     </tr>
                     <tr>
                       <th class="text-left">Duty:</th>
                       <td></td>
-                      <td class="text-right">
+                      <td v-if="showPricesInUSD" class="text-right">
+                        {{ "$ " + Math.round(duty_due).toLocaleString() + " " }}USD
+                      </td>
+                      <td v-else class="text-right">
                         {{ "$ " + Math.round(duty_due * exchange_rate).toLocaleString() + " " }}GYD
                       </td>
                     </tr>
                     <tr>
                       <th class="text-left">VAT:</th>
                       <td></td>
-                      <td class="text-right">
+                      <td v-if="showPricesInUSD" class="text-right">
+                        {{ "$ " + Math.round(vat_due).toLocaleString() + " " }}USD
+                      </td>
+                      <td v-else class="text-right">
                         {{ "$ " + Math.round(vat_due * exchange_rate).toLocaleString() + " " }}GYD
                       </td>
                     </tr>
                     <tr>
                       <th class="text-left">Total Taxes:</th>
                       <td></td>
-                      <td class="text-right">
+                      <td v-if="showPricesInUSD" class="text-right">
+                        {{ "$ " + Math.round(total_tax / exchange_rate).toLocaleString() + " " }}USD
+                      </td>
+                      <td v-else class="text-right">
                         {{ "$ " + Math.round(total_tax).toLocaleString() + " " }}GYD
                       </td>
                     </tr>
                     <tr>
                       <th class="text-left">Total Car Cost:</th>
                       <td></td>
-                      <td class="text-right">
+                      <td v-if="showPricesInUSD" class="text-right">
+                        {{
+                          "$ " + Math.round(total_cost / exchange_rate).toLocaleString() + " "
+                        }}USD
+                      </td>
+                      <td v-else class="text-right">
                         {{ "$ " + Math.round(total_cost).toLocaleString() + " " }}GYD
                       </td>
                     </tr>
@@ -328,6 +383,8 @@ export default {
   },
   data() {
     return {
+      currency: "GYD",
+      showPricesInUSD: false,
       cif: "",
       exchange_rate: "208.5",
       age: "",
@@ -771,6 +828,13 @@ export default {
         "Total Cost": this.total_cost,
       });
       console.log("Form Data:", formValues);
+    },
+    toggleCurrency() {
+      if (!this.showPricesInUSD) {
+        this.currency = "USD";
+      } else {
+        this.currency = "GYD";
+      }
     },
   },
 };
