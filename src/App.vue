@@ -1,211 +1,204 @@
 <template>
-  <div class="h-full">
-    <div class="h-full flex items-center justify-center sm:py-12 sm:px-4">
-      <div>
-        <div
-          class="bg-cover bg-center mx-auto w-auto [height:200px] sm:rounded-t-xl"
-          style="background-image: url(/images/empty-wallet.jpg)"
-          role="img"
-          aria-label="Image of an empty wallet"
-        ></div>
-        <div class="px-10 py-10">
-          <form class="max-w-md w-full space-y-8" @submit.prevent="checkForm">
+  <div class="flex items-center justify-center sm:py-12 sm:px-4 h-screen">
+    <div class="rounded-xl">
+      <div
+        class="bg-cover bg-center mx-auto w-auto [height:200px] sm:rounded-t-xl"
+        style="background-image: url(/images/empty-wallet.jpg)"
+        role="img"
+        aria-label="Image of an empty wallet"
+      ></div>
+      <div class="px-10 py-10">
+        <form class="max-w-md w-full space-y-8" @submit.prevent="checkForm">
+          <div>
+            <h2 class="text-center text-3xl font-extrabold text-gray-900 dark:text-white">
+              Vehicle Import Taxes Calculator
+            </h2>
+            <p class="text-sm text-center dark:text-white">
+              v{{ version }} | Last updated: 01/01/2024 |
+              <a
+                href="https://ridwanazeez.notion.site/Vehicle-Import-Taxes-Calculator-update-notes-dbcbf1d2de55487cbaaf4daa707cc443"
+                class="underline"
+                target="_blank"
+                >See what's new</a
+              >
+            </p>
+            <p class="mt-4 font-medium text-gray-500 dark:text-white text-center">
+              Disclaimer: This tool is in no way affiliated with the Guyana Revenue Authority (GRA).
+              It is an independent calculator which uses
+              <a href="https://www.gra.gov.gy/imports/motor-vehicle/" class="underline"
+                >publicly available formulas</a
+              >
+              <br />
+            </p>
+            <div v-if="errors.length">
+              <p class="mt-4 font-medium text-red-500 text-center text-2xl">
+                Error! Please fill in all the fields!
+              </p>
+              <p v-for="error in errors" :key="error" class="font-bold dark:text-white">
+                {{ error }}
+              </p>
+            </div>
+          </div>
+          <div class="mt-4 space-y-6">
+            <div class="grid grid-cols-6 gap-6">
+              <div class="col-span-6 sm:col-span-3">
+                <label for="cif" class="block text-sm font-medium text-gray-700 dark:text-white"
+                  >CIF (USD)</label
+                >
+                <div class="relative">
+                  <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                    <span class="text-gray-500 sm:text-sm">$</span>
+                  </div>
+                  <input
+                    id="cif"
+                    v-model="cif"
+                    type="number"
+                    name="cif"
+                    placeholder="12000"
+                    class="pl-7 mt-1 focus:ring-green-500 focus:border-green-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                  />
+                </div>
+              </div>
+              <div class="col-span-6 sm:col-span-3">
+                <label
+                  for="exchange-rate"
+                  class="block text-sm font-medium text-gray-700 dark:text-white"
+                  >Exchange Rate (GYD to USD)</label
+                >
+                <div class="relative">
+                  <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                    <span class="text-gray-500 sm:text-sm">$</span>
+                  </div>
+                  <input
+                    id="exchange-rate"
+                    v-model="exchange_rate"
+                    step=".1"
+                    type="number"
+                    name="exchange-rate"
+                    placeholder="208.5"
+                    class="pl-7 mt-1 focus:ring-green-500 focus:border-green-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="grid grid-cols-6 gap-6">
+              <div class="col-span-6 sm:col-span-3">
+                <label
+                  for="vehicle-age"
+                  class="block text-sm font-medium text-gray-700 dark:text-white"
+                  >Age of Vehicle</label
+                >
+                <select
+                  id="vehicle-age"
+                  v-model="age"
+                  name="vehicle-age"
+                  class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                >
+                  <option value="" disabled selected>Choose Vehicle Age</option>
+                  <option value="under4">Under 4 Years</option>
+                  <option value="over4">4 Years & Older</option>
+                </select>
+              </div>
+              <div class="col-span-6 sm:col-span-3">
+                <label for="fuel" class="block text-sm font-medium text-gray-700 dark:text-white"
+                  >Propulsion</label
+                >
+                <select
+                  id="fuel"
+                  v-model="fuel"
+                  name="fuel"
+                  class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                >
+                  <option value="" disabled selected>Choose Propulsion Type</option>
+                  <option value="Gasoline">Gasoline</option>
+                  <option value="Electric">Electric</option>
+                  <option value="Diesel">Diesel</option>
+                </select>
+              </div>
+            </div>
+            <div v-if="fuel != 'Electric'">
+              <div v-if="fuel == 'Gasoline'">
+                <label for="cc" class="block text-sm font-medium text-gray-700 dark:text-white"
+                  >Engine CC</label
+                >
+                <select
+                  id="cc"
+                  v-model="cc"
+                  name="cc"
+                  class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                >
+                  <option value="" disabled selected>Choose Engine CC</option>
+                  <option value="1000">0cc - 1000cc</option>
+                  <option value="1500">1001cc - 1500cc</option>
+                  <option value="1800">1501cc - 1800cc</option>
+                  <option value="2000">1801cc - 2000cc</option>
+                  <option value="3000">2001cc - 3000cc</option>
+                  <option value="4000">Over 3000cc</option>
+                </select>
+              </div>
+              <div v-if="fuel == 'Diesel'">
+                <label for="cc" class="block text-sm font-medium text-gray-700 dark:text-white"
+                  >Engine CC</label
+                >
+                <select
+                  id="cc"
+                  v-model="cc"
+                  name="cc"
+                  class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                >
+                  <option value="" disabled selected>Choose Engine CC</option>
+                  <option value="under1500">Under 1500cc</option>
+                  <option value="2000">1501cc - 2000cc</option>
+                  <option value="2500">2001cc - 2500cc</option>
+                  <option value="3000">2501cc - 3000cc</option>
+                  <option value="4000">Over 3000cc</option>
+                </select>
+              </div>
+              <div v-if="fuel != ''" class="mt-6">
+                <label for="pickup" class="block text-sm font-medium text-gray-700 dark:text-white"
+                  >Is this vehicle a Pickup?</label
+                >
+                <select
+                  id="pickup"
+                  v-model="pickup"
+                  name="pickup"
+                  class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                >
+                  <option value="" disabled selected>Choose option</option>
+                  <option value="no">No</option>
+                  <option value="single cab">Yes, Single Cab</option>
+                  <option value="double cab">Yes, Double Cab</option>
+                </select>
+              </div>
+            </div>
+            <!-- got to research how the duty free works before i implement -->
+            <!-- <div class="flex items-center">
+              <input v-model="duty_free" id="duty-free" name="duty-free" type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-green-500 border-gray-300 rounded" />
+              <label for="duty-free" class="ml-2 block text-sm text-gray-700">Duty Free?</label>
+            </div> -->
             <div>
-              <h2 class="text-center text-3xl font-extrabold text-gray-900 dark:text-white">
-                Vehicle Import Taxes Calculator
-              </h2>
-              <p class="text-sm text-center dark:text-white">
-                v{{ version }} | Last updated: 15/08/2023 |
-                <a
-                  href="https://ridwanazeez.notion.site/Vehicle-Import-Taxes-Calculator-update-notes-dbcbf1d2de55487cbaaf4daa707cc443"
-                  class="underline"
-                  >See what's new</a
-                >
-              </p>
-              <p class="mt-4 font-medium text-gray-500 dark:text-white text-center">
-                Disclaimer: This tool is in no way affiliated with the Guyana Revenue Authority
-                (GRA). It is an independent calculator which uses
-                <a href="https://www.gra.gov.gy/imports/motor-vehicle/" class="underline"
-                  >publicly available formulas</a
-                >
-                <br />
-              </p>
-              <div v-if="errors.length">
-                <p class="mt-4 font-medium text-red-500 text-center text-2xl">
-                  Error! Please fill in all the fields!
-                </p>
-                <p v-for="error in errors" :key="error" class="font-bold dark:text-white">
-                  {{ error }}
-                </p>
-              </div>
+              <button
+                type="submit"
+                class="group relative w-full flex justify-center py-2 px-4 border border-transparent font-medium rounded-md text-green-700 dark:text-white bg-green-100 dark:bg-green-500 hover:bg-green-700 dark:hover:bg-green-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2"
+                @click="
+                  checkForm, calculateCost();
+                  calculateTax();
+                "
+              >
+                Calculate Duty
+              </button>
             </div>
-            <div class="mt-4 space-y-6">
-              <div class="grid grid-cols-6 gap-6">
-                <div class="col-span-6 sm:col-span-3">
-                  <label for="cif" class="block text-sm font-medium text-gray-700 dark:text-white"
-                    >CIF (USD)</label
-                  >
-                  <div class="relative">
-                    <div
-                      class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
-                    >
-                      <span class="text-gray-500 sm:text-sm">$</span>
-                    </div>
-                    <input
-                      id="cif"
-                      v-model="cif"
-                      type="number"
-                      name="cif"
-                      placeholder="12000"
-                      class="pl-7 mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                    />
-                  </div>
-                </div>
-                <div class="col-span-6 sm:col-span-3">
-                  <label
-                    for="exchange-rate"
-                    class="block text-sm font-medium text-gray-700 dark:text-white"
-                    >Exchange Rate (GYD to USD)</label
-                  >
-                  <div class="relative">
-                    <div
-                      class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
-                    >
-                      <span class="text-gray-500 sm:text-sm">$</span>
-                    </div>
-                    <input
-                      id="exchange-rate"
-                      v-model="exchange_rate"
-                      step=".1"
-                      type="number"
-                      name="exchange-rate"
-                      placeholder="208.5"
-                      class="pl-7 mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div class="grid grid-cols-6 gap-6">
-                <div class="col-span-6 sm:col-span-3">
-                  <label
-                    for="vehicle-age"
-                    class="block text-sm font-medium text-gray-700 dark:text-white"
-                    >Age of Vehicle</label
-                  >
-                  <select
-                    id="vehicle-age"
-                    v-model="age"
-                    name="vehicle-age"
-                    class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  >
-                    <option value="" disabled selected>Choose Vehicle Age</option>
-                    <option value="under4">Under 4 Years</option>
-                    <option value="over4">4 Years & Older</option>
-                  </select>
-                </div>
-                <div class="col-span-6 sm:col-span-3">
-                  <label for="fuel" class="block text-sm font-medium text-gray-700 dark:text-white"
-                    >Propulsion</label
-                  >
-                  <select
-                    id="fuel"
-                    v-model="fuel"
-                    name="fuel"
-                    class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  >
-                    <option value="" disabled selected>Choose Propulsion Type</option>
-                    <option value="Gasoline">Gasoline</option>
-                    <option value="Electric">Electric</option>
-                    <option value="Diesel">Diesel</option>
-                  </select>
-                </div>
-              </div>
-              <div v-if="fuel != 'Electric'">
-                <div v-if="fuel == 'Gasoline'">
-                  <label for="cc" class="block text-sm font-medium text-gray-700 dark:text-white"
-                    >Engine CC</label
-                  >
-                  <select
-                    id="cc"
-                    v-model="cc"
-                    name="cc"
-                    class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  >
-                    <option value="" disabled selected>Choose Engine CC</option>
-                    <option value="1000">0cc - 1000cc</option>
-                    <option value="1500">1001cc - 1500cc</option>
-                    <option value="1800">1501cc - 1800cc</option>
-                    <option value="2000">1801cc - 2000cc</option>
-                    <option value="3000">2001cc - 3000cc</option>
-                    <option value="4000">Over 3000cc</option>
-                  </select>
-                </div>
-                <div v-if="fuel == 'Diesel'">
-                  <label for="cc" class="block text-sm font-medium text-gray-700 dark:text-white"
-                    >Engine CC</label
-                  >
-                  <select
-                    id="cc"
-                    v-model="cc"
-                    name="cc"
-                    class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  >
-                    <option value="" disabled selected>Choose Engine CC</option>
-                    <option value="under1500">Under 1500cc</option>
-                    <option value="2000">1501cc - 2000cc</option>
-                    <option value="2500">2001cc - 2500cc</option>
-                    <option value="3000">2501cc - 3000cc</option>
-                    <option value="4000">Over 3000cc</option>
-                  </select>
-                </div>
-                <div v-if="fuel != ''" class="mt-6">
-                  <label
-                    for="pickup"
-                    class="block text-sm font-medium text-gray-700 dark:text-white"
-                    >Is this vehicle a Pickup?</label
-                  >
-                  <select
-                    id="pickup"
-                    v-model="pickup"
-                    name="pickup"
-                    class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  >
-                    <option value="" disabled selected>Choose option</option>
-                    <option value="no">No</option>
-                    <option value="single cab">Yes, Single Cab</option>
-                    <option value="double cab">Yes, Double Cab</option>
-                  </select>
-                </div>
-              </div>
-              <!-- got to research how the duty free works before i implement -->
-              <!-- <div class="flex items-center">
-                <input v-model="duty_free" id="duty-free" name="duty-free" type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
-                <label for="duty-free" class="ml-2 block text-sm text-gray-700">Duty Free?</label>
-              </div> -->
-              <div>
-                <button
-                  type="submit"
-                  class="group relative w-full flex justify-center py-2 px-4 border border-transparent font-medium rounded-md text-green-700 dark:text-white bg-green-100 dark:bg-green-500 hover:bg-green-700 dark:hover:bg-green-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2"
-                  @click="
-                    checkForm, calculateCost();
-                    calculateTax();
-                  "
-                >
-                  Calculate Duty
-                </button>
-              </div>
-              <div>
-                <button
-                  class="text-gray-300 hover:text-gray-700 rounded-md w-full"
-                  type="button"
-                  @click="toggleDark()"
-                >
-                  Toggle Theme
-                </button>
-              </div>
+            <div>
+              <button
+                class="text-gray-300 hover:text-gray-700 rounded-md w-full"
+                type="button"
+                @click="toggleDark()"
+              >
+                Toggle Theme
+              </button>
             </div>
-          </form>
-        </div>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -238,70 +231,68 @@
             <DialogPanel
               class="relative bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-lg sm:w-full"
             >
-              <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                <div class="sm:flex sm:items-start">
-                  <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                    <DialogTitle as="h3" class="text-xl font-bold text-gray-900 pb-3"
-                      >Results
-                    </DialogTitle>
-                    <table class="table-auto w-full">
-                      <tr>
-                        <th class="text-left">Car Cost:</th>
-                        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                        <td class="text-right">
-                          {{ "$ " + Math.round(cost).toLocaleString() + " " }}GYD
-                        </td>
-                      </tr>
-                      <tr>
-                        <th class="text-left">Excise Tax:</th>
-                        <td></td>
-                        <td v-if="cc == '1500' || cc == '1000'" class="text-right">
-                          {{ "$ " + Math.round(excise_due).toLocaleString() + " " }}GYD
-                        </td>
-                        <td v-else class="text-right">
-                          {{
-                            "$ " + Math.round(excise_due * exchange_rate).toLocaleString() + " "
-                          }}GYD
-                        </td>
-                      </tr>
-                      <tr>
-                        <th class="text-left">Duty:</th>
-                        <td></td>
-                        <td class="text-right">
-                          {{
-                            "$ " + Math.round(duty_due * exchange_rate).toLocaleString() + " "
-                          }}GYD
-                        </td>
-                      </tr>
-                      <tr>
-                        <th class="text-left">VAT:</th>
-                        <td></td>
-                        <td class="text-right">
-                          {{ "$ " + Math.round(vat_due * exchange_rate).toLocaleString() + " " }}GYD
-                        </td>
-                      </tr>
-                      <tr>
-                        <th class="text-left">Total Taxes:</th>
-                        <td></td>
-                        <td class="text-right">
-                          {{ "$ " + Math.round(total_tax).toLocaleString() + " " }}GYD
-                        </td>
-                      </tr>
-                      <tr>
-                        <th class="text-left">Total Car Cost:</th>
-                        <td></td>
-                        <td class="text-right">
-                          {{ "$ " + Math.round(total_cost).toLocaleString() + " " }}GYD
-                        </td>
-                      </tr>
-                    </table>
-                  </div>
+              <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4 dark:bg-gray-900 dark:text-white">
+                <div class="text-center sm:text-left">
+                  <DialogTitle as="h3" class="text-xl font-bold text-gray-900 pb-3 dark:text-white"
+                    >Results
+                  </DialogTitle>
+                  <table class="table-auto w-full">
+                    <tr>
+                      <th class="text-left">Car Cost:</th>
+                      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                      <td class="text-right">
+                        {{ "$ " + Math.round(cost).toLocaleString() + " " }}GYD
+                      </td>
+                    </tr>
+                    <tr>
+                      <th class="text-left">Excise Tax:</th>
+                      <td></td>
+                      <td v-if="cc == '1500' || cc == '1000'" class="text-right">
+                        {{ "$ " + Math.round(excise_due).toLocaleString() + " " }}GYD
+                      </td>
+                      <td v-else class="text-right">
+                        {{
+                          "$ " + Math.round(excise_due * exchange_rate).toLocaleString() + " "
+                        }}GYD
+                      </td>
+                    </tr>
+                    <tr>
+                      <th class="text-left">Duty:</th>
+                      <td></td>
+                      <td class="text-right">
+                        {{ "$ " + Math.round(duty_due * exchange_rate).toLocaleString() + " " }}GYD
+                      </td>
+                    </tr>
+                    <tr>
+                      <th class="text-left">VAT:</th>
+                      <td></td>
+                      <td class="text-right">
+                        {{ "$ " + Math.round(vat_due * exchange_rate).toLocaleString() + " " }}GYD
+                      </td>
+                    </tr>
+                    <tr>
+                      <th class="text-left">Total Taxes:</th>
+                      <td></td>
+                      <td class="text-right">
+                        {{ "$ " + Math.round(total_tax).toLocaleString() + " " }}GYD
+                      </td>
+                    </tr>
+                    <tr>
+                      <th class="text-left">Total Car Cost:</th>
+                      <td></td>
+                      <td class="text-right">
+                        {{ "$ " + Math.round(total_cost).toLocaleString() + " " }}GYD
+                      </td>
+                    </tr>
+                  </table>
                 </div>
               </div>
-              <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+              <div
+                class="bg-gray-50 px-4 py-4 sm:px-6 sm:flex sm:flex-row-reverse dark:bg-gray-800"
+              >
                 <button
                   type="button"
-                  class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+                  class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 mr-0 sm:w-auto sm:text-sm"
                   @click="
                     show = !show;
                     reset();
