@@ -26,7 +26,7 @@
               Disclaimer: This tool is in no way affiliated with the Guyana Revenue Authority (GRA).
               It is an independent calculator which uses
               <a
-                href="https://www.gra.gov.gy/imports/motor-vehicle/"
+                href="https://web.archive.org/web/20240103192850/https://www.gra.gov.gy/imports/motor-vehicle/"
                 class="underline"
                 target="_blank"
                 >publicly available formulas</a
