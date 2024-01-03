@@ -491,7 +491,7 @@ export default {
                   this.excise_tax = 0.1; //10% excise tax
                   this.vat = 0.14; //14% VAT
                   this.duty_due = this.duty * this.cif;
-                  this.excise_due = this.excise_tax * this.duty_due + this.cif;
+                  this.excise_due = this.excise_tax * (this.duty_due + this.cif);
                   this.vat_due = (this.cif + this.duty_due + this.excise_due) * this.vat;
                   this.vat_due = Math.round(this.vat_due);
                   this.total_tax =
@@ -516,7 +516,7 @@ export default {
                   this.excise_tax = 0.1; //10% excise tax
                   this.vat = 0.14; //14% VAT
                   this.duty_due = this.duty * this.cif;
-                  this.excise_due = this.excise_tax * this.duty_due + this.cif;
+                  this.excise_due = this.excise_tax * (this.duty_due + this.cif);
                   this.vat_due = (this.cif + this.duty_due + this.excise_due) * this.vat;
                   this.vat_due = Math.round(this.vat_due);
                   this.total_tax =
@@ -553,7 +553,7 @@ export default {
                   this.excise_tax = 1.1; //110% excise tax
                   this.vat = 0.14; //14% VAT
                   this.duty_due = this.duty * this.cif;
-                  this.excise_due = this.excise_tax * this.duty_due + this.cif;
+                  this.excise_due = this.excise_tax * (this.duty_due + this.cif);
                   this.vat_due = (this.cif + this.duty_due + this.excise_due) * this.vat;
                   this.vat_due = Math.round(this.vat_due);
                   this.total_tax =
@@ -564,10 +564,10 @@ export default {
                 break;
               case "4000":
                 this.duty = 0.45; //45% duty
-                this.excise_tax = 1.1; //110% excise tax
+                this.excise_tax = 1.4; //110% excise tax
                 this.vat = 0.14; //14% VAT
                 this.duty_due = this.duty * this.cif;
-                this.excise_due = this.excise_tax * this.duty_due + this.cif;
+                this.excise_due = this.excise_tax * (this.duty_due + this.cif);
                 this.vat_due = (this.cif + this.duty_due + this.excise_due) * this.vat;
                 this.vat_due = Math.round(this.vat_due);
                 this.total_tax =
@@ -650,7 +650,7 @@ export default {
                   this.excise_tax = 0.1; //10% excise tax
                   this.vat = 0.14; //14% VAT
                   this.duty_due = this.duty * this.cif;
-                  this.excise_due = this.excise_tax * this.duty_due + this.cif;
+                  this.excise_due = this.excise_tax * (this.duty_due + this.cif);
                   this.vat_due = (this.cif + this.duty_due + this.excise_due) * this.vat;
                   this.vat_due = Math.round(this.vat_due);
                   this.total_tax =
@@ -665,7 +665,7 @@ export default {
                   this.excise_tax = 0.75; //75% excise tax
                   this.vat = 0.14; //14% VAT
                   this.duty_due = this.duty * this.cif;
-                  this.excise_due = this.excise_tax * this.duty_due + this.cif;
+                  this.excise_due = this.excise_tax * (this.duty_due + this.cif);
                   this.vat_due = (this.cif + this.duty_due + this.excise_due) * this.vat;
                   this.total_tax =
                     (this.duty_due + this.vat_due + this.excise_due) * this.exchange_rate;
@@ -685,7 +685,7 @@ export default {
                   this.excise_tax = 1.1; //110% excise tax
                   this.vat = 0.14; //14% VAT
                   this.duty_due = this.duty * this.cif;
-                  this.excise_due = this.excise_tax * this.duty_due + this.cif;
+                  this.excise_due = this.excise_tax * (this.duty_due + this.cif);
                   this.vat_due = (this.cif + this.duty_due + this.excise_due) * this.vat;
                   this.total_tax =
                     (this.duty_due + this.vat_due + this.excise_due) * this.exchange_rate;
@@ -699,7 +699,7 @@ export default {
                   this.excise_tax = 0.75; //75% excise tax
                   this.vat = 0.14; //14% VAT
                   this.duty_due = this.duty * this.cif;
-                  this.excise_due = this.excise_tax * this.duty_due + this.cif;
+                  this.excise_due = this.excise_tax * (this.duty_due + this.cif);
                   this.vat_due = (this.cif + this.duty_due + this.excise_due) * this.vat;
                   this.vat_due = Math.round(this.vat_due);
                   this.total_tax =
@@ -721,7 +721,7 @@ export default {
                   this.excise_tax = 1.1; //110% excise tax
                   this.vat = 0.14; //14% VAT
                   this.duty_due = this.duty * this.cif;
-                  this.excise_due = this.excise_tax * this.duty_due + this.cif;
+                  this.excise_due = this.excise_tax * (this.duty_due + this.cif);
                   this.vat_due = (this.cif + this.duty_due + this.excise_due) * this.vat;
                   this.vat_due = Math.round(this.vat_due);
                   this.total_tax =
@@ -735,7 +735,7 @@ export default {
                 this.excise_tax = 1.1; //110% excise tax
                 this.vat = 0.14; //14% VAT
                 this.duty_due = this.duty * this.cif;
-                this.excise_due = this.excise_tax * this.duty_due + this.cif;
+                this.excise_due = this.excise_tax * (this.duty_due + this.cif);
                 this.vat_due = (this.cif + this.duty_due + this.excise_due) * this.vat;
                 this.vat_due = Math.round(this.vat_due);
                 this.total_tax =
