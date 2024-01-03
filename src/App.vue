@@ -276,7 +276,10 @@
                     <tr>
                       <th class="text-left">Excise Tax:</th>
                       <td></td>
-                      <td v-if="cc == '1500' || cc == '1000'" class="text-right">
+                      <td
+                        v-if="cc == '1500' || cc == '1000' || cc == 'under1500'"
+                        class="text-right"
+                      >
                         <span v-if="showPricesInUSD"
                           >{{
                             "$ " + Math.round(excise_due / exchange_rate).toLocaleString() + " "
@@ -746,7 +749,7 @@ export default {
           } else {
             switch (this.cc) {
               case "under1500":
-                this.excise_due = 0;
+                this.excise_due = 800000;
                 this.total_tax = 800000;
                 this.total_cost = this.cost + this.total_tax;
                 break;
