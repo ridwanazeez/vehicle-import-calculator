@@ -274,6 +274,16 @@
                       </td>
                     </tr>
                     <tr>
+                      <th class="text-left">Duty:</th>
+                      <td></td>
+                      <td v-if="showPricesInUSD" class="text-right">
+                        {{ "$ " + Math.round(duty_due).toLocaleString() + " " }}USD
+                      </td>
+                      <td v-else class="text-right">
+                        {{ "$ " + Math.round(duty_due * exchange_rate).toLocaleString() + " " }}GYD
+                      </td>
+                    </tr>
+                    <tr>
                       <th class="text-left">Excise Tax:</th>
                       <td></td>
                       <td
@@ -298,16 +308,6 @@
                             "$ " + Math.round(excise_due * exchange_rate).toLocaleString() + " "
                           }}GYD
                         </span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th class="text-left">Duty:</th>
-                      <td></td>
-                      <td v-if="showPricesInUSD" class="text-right">
-                        {{ "$ " + Math.round(duty_due).toLocaleString() + " " }}USD
-                      </td>
-                      <td v-else class="text-right">
-                        {{ "$ " + Math.round(duty_due * exchange_rate).toLocaleString() + " " }}GYD
                       </td>
                     </tr>
                     <tr>
@@ -754,7 +754,7 @@ export default {
                 this.total_cost = this.cost + this.total_tax;
                 break;
               case "2000":
-                this.excise_due = (this.cif + 8200) * 0.3 + 8200;
+                this.excise_due = (this.cif + 15400) * 0.3 + 15400;
                 this.total_tax = this.excise_due * this.exchange_rate;
                 this.total_tax = Math.round(this.total_tax);
                 this.total_cost = this.cost + this.total_tax;
