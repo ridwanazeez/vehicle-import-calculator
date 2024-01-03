@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-center justify-center sm:py-12 sm:px-4 h-screen">
+  <div class="flex items-center justify-center sm:py-12 sm:px-4 h-full md:h-screen">
     <div class="rounded-xl">
       <div
         class="bg-cover bg-center mx-auto w-auto [height:200px] sm:rounded-t-xl"
@@ -14,7 +14,7 @@
               Vehicle Import Taxes Calculator
             </h2>
             <p class="text-sm text-center dark:text-white">
-              v{{ version }} | Last updated: 01/01/2024 |
+              v{{ version }} | Last updated: 03/01/2024 |
               <a
                 href="https://ridwanazeez.notion.site/Vehicle-Import-Taxes-Calculator-update-notes-dbcbf1d2de55487cbaaf4daa707cc443"
                 class="underline"
