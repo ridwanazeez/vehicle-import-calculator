@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-center justify-center sm:py-12 sm:px-4 h-screen">
+  <div class="flex items-center justify-center sm:py-12 sm:px-4 h-full md:h-screen">
     <div class="rounded-xl">
       <div
         class="bg-cover bg-center mx-auto w-auto [height:200px] sm:rounded-t-xl"
@@ -14,7 +14,7 @@
               Vehicle Import Taxes Calculator
             </h2>
             <p class="text-sm text-center dark:text-white">
-              v{{ version }} | Last updated: 01/01/2024 |
+              v{{ version }} | Last updated: 03/01/2024 |
               <a
                 href="https://ridwanazeez.notion.site/Vehicle-Import-Taxes-Calculator-update-notes-dbcbf1d2de55487cbaaf4daa707cc443"
                 class="underline"
@@ -26,7 +26,7 @@
               Disclaimer: This tool is in no way affiliated with the Guyana Revenue Authority (GRA).
               It is an independent calculator which uses
               <a
-                href="https://www.gra.gov.gy/imports/motor-vehicle/"
+                href="https://web.archive.org/web/20240103192850/https://www.gra.gov.gy/imports/motor-vehicle/"
                 class="underline"
                 target="_blank"
                 >publicly available formulas</a
@@ -185,7 +185,7 @@
                 class="group relative w-full flex justify-center py-2 px-4 border border-transparent font-medium rounded-md text-green-700 dark:text-white bg-green-100 dark:bg-green-500 hover:bg-green-700 dark:hover:bg-green-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2"
                 @click="
                   checkForm, calculateCost();
-                  calculateTax();
+                  calculate();
                 "
               >
                 Calculate Duty
@@ -262,6 +262,10 @@
                       &nbsp;Currency: {{ currency }}
                     </label>
                   </div>
+                  <p v-if="pickup != 'no'" class="font-bold text-gray-900 dark:text-white pb-3">
+                    Please note: The rates shown for pickup trucks are for trucks being registered
+                    as "Goods vehicles"
+                  </p>
                   <table class="table-auto w-full">
                     <tr>
                       <th class="text-left">Car Cost:</th>
@@ -274,9 +278,22 @@
                       </td>
                     </tr>
                     <tr>
+                      <th class="text-left">Duty:</th>
+                      <td></td>
+                      <td v-if="showPricesInUSD" class="text-right">
+                        {{ "$ " + Math.round(duty_due).toLocaleString() + " " }}USD
+                      </td>
+                      <td v-else class="text-right">
+                        {{ "$ " + Math.round(duty_due * exchange_rate).toLocaleString() + " " }}GYD
+                      </td>
+                    </tr>
+                    <tr>
                       <th class="text-left">Excise Tax:</th>
                       <td></td>
-                      <td v-if="cc == '1500' || cc == '1000'" class="text-right">
+                      <td
+                        v-if="cc == '1500' || cc == '1000' || cc == 'under1500'"
+                        class="text-right"
+                      >
                         <span v-if="showPricesInUSD"
                           >{{
                             "$ " + Math.round(excise_due / exchange_rate).toLocaleString() + " "
@@ -295,16 +312,6 @@
                             "$ " + Math.round(excise_due * exchange_rate).toLocaleString() + " "
                           }}GYD
                         </span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th class="text-left">Duty:</th>
-                      <td></td>
-                      <td v-if="showPricesInUSD" class="text-right">
-                        {{ "$ " + Math.round(duty_due).toLocaleString() + " " }}USD
-                      </td>
-                      <td v-else class="text-right">
-                        {{ "$ " + Math.round(duty_due * exchange_rate).toLocaleString() + " " }}GYD
                       </td>
                     </tr>
                     <tr>
@@ -457,7 +464,7 @@ export default {
       this.cost = this.cif * this.exchange_rate;
     },
     // Main tax calculation function
-    calculateTax() {
+    calculate() {
       switch (this.fuel) {
         case "Gasoline":
           if (this.age == "under4") {
@@ -488,7 +495,7 @@ export default {
                   this.excise_tax = 0.1; //10% excise tax
                   this.vat = 0.14; //14% VAT
                   this.duty_due = this.duty * this.cif;
-                  this.excise_due = this.excise_tax * this.duty_due + this.cif;
+                  this.excise_due = this.excise_tax * (this.duty_due + this.cif);
                   this.vat_due = (this.cif + this.duty_due + this.excise_due) * this.vat;
                   this.vat_due = Math.round(this.vat_due);
                   this.total_tax =
@@ -513,7 +520,7 @@ export default {
                   this.excise_tax = 0.1; //10% excise tax
                   this.vat = 0.14; //14% VAT
                   this.duty_due = this.duty * this.cif;
-                  this.excise_due = this.excise_tax * this.duty_due + this.cif;
+                  this.excise_due = this.excise_tax * (this.duty_due + this.cif);
                   this.vat_due = (this.cif + this.duty_due + this.excise_due) * this.vat;
                   this.vat_due = Math.round(this.vat_due);
                   this.total_tax =
@@ -550,7 +557,7 @@ export default {
                   this.excise_tax = 1.1; //110% excise tax
                   this.vat = 0.14; //14% VAT
                   this.duty_due = this.duty * this.cif;
-                  this.excise_due = this.excise_tax * this.duty_due + this.cif;
+                  this.excise_due = this.excise_tax * (this.duty_due + this.cif);
                   this.vat_due = (this.cif + this.duty_due + this.excise_due) * this.vat;
                   this.vat_due = Math.round(this.vat_due);
                   this.total_tax =
@@ -561,10 +568,10 @@ export default {
                 break;
               case "4000":
                 this.duty = 0.45; //45% duty
-                this.excise_tax = 1.1; //110% excise tax
+                this.excise_tax = 1.4; //110% excise tax
                 this.vat = 0.14; //14% VAT
                 this.duty_due = this.duty * this.cif;
-                this.excise_due = this.excise_tax * this.duty_due + this.cif;
+                this.excise_due = this.excise_tax * (this.duty_due + this.cif);
                 this.vat_due = (this.cif + this.duty_due + this.excise_due) * this.vat;
                 this.vat_due = Math.round(this.vat_due);
                 this.total_tax =
@@ -632,7 +639,19 @@ export default {
                 this.total_cost = this.cost + this.total_tax;
                 break;
               case "2000":
-                if (this.pickup != "no") {
+                if (this.pickup == "no") {
+                  this.duty = 0.45; //45% duty
+                  this.excise_tax = 0.1; //10% excise tax
+                  this.vat = 0.14; //14% VAT
+                  this.duty_due = this.duty * this.cif;
+                  this.excise_due = this.excise_tax * (this.duty_due + this.cif);
+                  this.vat_due = (this.cif + this.duty_due + this.excise_due) * this.vat;
+                  this.vat_due = Math.round(this.vat_due);
+                  this.total_tax =
+                    (this.duty_due + this.vat_due + this.excise_due) * this.exchange_rate;
+                  this.total_tax = Math.round(this.total_tax);
+                  this.total_cost = this.cost + this.total_tax;
+                } else {
                   this.duty = 0.45; //45% duty
                   this.vat = 0.14; //14% VAT
                   this.excise_due = 0;
@@ -640,18 +659,6 @@ export default {
                   this.vat_due = (this.cif + this.duty_due) * this.vat;
                   this.vat_due = Math.round(this.vat_due);
                   this.total_tax = (this.duty_due + this.vat_due) * this.exchange_rate;
-                  this.total_tax = Math.round(this.total_tax);
-                  this.total_cost = this.cost + this.total_tax;
-                } else {
-                  this.duty = 0.45; //45% duty
-                  this.excise_tax = 0.1; //10% excise tax
-                  this.vat = 0.14; //14% VAT
-                  this.duty_due = this.duty * this.cif;
-                  this.excise_due = this.excise_tax * this.duty_due + this.cif;
-                  this.vat_due = (this.cif + this.duty_due + this.excise_due) * this.vat;
-                  this.vat_due = Math.round(this.vat_due);
-                  this.total_tax =
-                    (this.duty_due + this.vat_due + this.excise_due) * this.exchange_rate;
                   this.total_tax = Math.round(this.total_tax);
                   this.total_cost = this.cost + this.total_tax;
                 }
@@ -662,7 +669,7 @@ export default {
                   this.excise_tax = 0.75; //75% excise tax
                   this.vat = 0.14; //14% VAT
                   this.duty_due = this.duty * this.cif;
-                  this.excise_due = this.excise_tax * this.duty_due + this.cif;
+                  this.excise_due = this.excise_tax * (this.duty_due + this.cif);
                   this.vat_due = (this.cif + this.duty_due + this.excise_due) * this.vat;
                   this.total_tax =
                     (this.duty_due + this.vat_due + this.excise_due) * this.exchange_rate;
@@ -682,7 +689,7 @@ export default {
                   this.excise_tax = 1.1; //110% excise tax
                   this.vat = 0.14; //14% VAT
                   this.duty_due = this.duty * this.cif;
-                  this.excise_due = this.excise_tax * this.duty_due + this.cif;
+                  this.excise_due = this.excise_tax * (this.duty_due + this.cif);
                   this.vat_due = (this.cif + this.duty_due + this.excise_due) * this.vat;
                   this.total_tax =
                     (this.duty_due + this.vat_due + this.excise_due) * this.exchange_rate;
@@ -696,7 +703,7 @@ export default {
                   this.excise_tax = 0.75; //75% excise tax
                   this.vat = 0.14; //14% VAT
                   this.duty_due = this.duty * this.cif;
-                  this.excise_due = this.excise_tax * this.duty_due + this.cif;
+                  this.excise_due = this.excise_tax * (this.duty_due + this.cif);
                   this.vat_due = (this.cif + this.duty_due + this.excise_due) * this.vat;
                   this.vat_due = Math.round(this.vat_due);
                   this.total_tax =
@@ -718,7 +725,7 @@ export default {
                   this.excise_tax = 1.1; //110% excise tax
                   this.vat = 0.14; //14% VAT
                   this.duty_due = this.duty * this.cif;
-                  this.excise_due = this.excise_tax * this.duty_due + this.cif;
+                  this.excise_due = this.excise_tax * (this.duty_due + this.cif);
                   this.vat_due = (this.cif + this.duty_due + this.excise_due) * this.vat;
                   this.vat_due = Math.round(this.vat_due);
                   this.total_tax =
@@ -732,7 +739,7 @@ export default {
                 this.excise_tax = 1.1; //110% excise tax
                 this.vat = 0.14; //14% VAT
                 this.duty_due = this.duty * this.cif;
-                this.excise_due = this.excise_tax * this.duty_due + this.cif;
+                this.excise_due = this.excise_tax * (this.duty_due + this.cif);
                 this.vat_due = (this.cif + this.duty_due + this.excise_due) * this.vat;
                 this.vat_due = Math.round(this.vat_due);
                 this.total_tax =
@@ -746,12 +753,12 @@ export default {
           } else {
             switch (this.cc) {
               case "under1500":
-                this.excise_due = 0;
+                this.excise_due = 800000;
                 this.total_tax = 800000;
                 this.total_cost = this.cost + this.total_tax;
                 break;
               case "2000":
-                this.excise_due = (this.cif + 8200) * 0.3 + 8200;
+                this.excise_due = (this.cif + 15400) * 0.3 + 15400;
                 this.total_tax = this.excise_due * this.exchange_rate;
                 this.total_tax = Math.round(this.total_tax);
                 this.total_cost = this.cost + this.total_tax;
@@ -835,6 +842,19 @@ export default {
       } else {
         this.currency = "GYD";
       }
+    },
+    calculateTax(cif, duty, excise_tax, vat) {
+      this.duty_due = duty * cif;
+      if (excise_tax == 800000) {
+        this.excise_due = 800000;
+      } else {
+        this.excise_due = excise_tax * (this.duty_due + cif);
+      }
+      this.vat_due = (this.cif + this.duty_due + this.excise_due) * vat;
+      this.vat_due = Math.round(this.vat_due);
+      this.total_tax = (this.duty_due + this.vat_due + this.excise_due) * this.exchange_rate;
+      this.total_tax = Math.round(this.total_tax);
+      this.total_cost = this.cost + this.total_tax;
     },
   },
 };
